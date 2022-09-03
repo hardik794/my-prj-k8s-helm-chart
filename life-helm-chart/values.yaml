@@ -1,0 +1,55 @@
+myservice:
+  my-prj-service:
+    service:
+      enabled: true
+      ports:
+        - port: 5000
+          protocol: TCP
+    deployment:
+      enabled: true
+      replicas: 1
+      imagePullSecretName: regcred
+      image: hardik794/my-prj-service
+      tag: v1
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 5000
+      env:
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            configRef:
+              name: mysql-config
+              key: SPRING_DATASOURCE_URL
+              optional: false
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mysql-cred
+              key: db_user
+              optional: false
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-cred
+              key: db_password
+              optional: false
+
+  my-prj-ui:
+    service:
+      enabled: true
+      ports:
+        - name: http
+          port: 80
+          protocol: TCP
+    deployment:
+      enabled: true
+      replicas: 1
+      imagePullSecretName: regcred
+      image: hardik794/my-prj-ui
+      tag: v1
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 80
+      env:
+        - name: baseUrl
+          value: my-prj-service-svc

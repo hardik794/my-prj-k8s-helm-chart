@@ -1,0 +1,9 @@
+mysql:
+  image: mysql
+  tag: 8.0
+  imagePullPolicy: Always
+  host: mysql-svc
+  user: root
+  password: root
+  database: lifemanagement
+
