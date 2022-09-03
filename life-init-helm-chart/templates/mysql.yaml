@@ -16,50 +16,50 @@ kind: Deployment
 metadata:
     name: mysql-deployment
 spec:
-replicas: 1
-selector:
-    matchLabels:
-        app: mysql
-template:
-    metadata:
-        labels:
+    replicas: 1
+    selector:
+        matchLabels:
             app: mysql
-    spec:
-        volumes:
-            -   name: mysql-pv
-                persistentVolumeClaim:
-                    claimName: mysql-pvc
-    containers:
-        -   name: mysql
-            image: "{{ .Values.mysql.image }}:{{ .Values.mysql.tag }}"
-            imagePullPolicy: {{ .Values.mysql.imagePullPolicy }}
-            ports:
-                -   containerPort: 3306
-            env:
-                -   name: MYSQL_DATABASE
-                    value: server
-                -   name: MYSQL_ROOT_PASSWORD
-                    valueFrom:
-                        secretKeyRef:
-                            name: mysql-cred
-                            key: db_password
-                            optional: false
-                -   name: MYSQL_USER
-                    valueFrom:
-                        secretKeyRef:
-                            name: mysql-cred
-                            key: db_user
-                            optional: false
-                -   name: MYSQL_PASSWORD
-                    valueFrom:
-                        secretKeyRef:
-                            name: mysql-cred
-                            key: db_password
-                            optional: false
-            volumeMounts:
-                -   mountPath: /var/lib/mysql/data
-                    name: mysql-pv
-                    subPath: mysql
+    template:
+        metadata:
+            labels:
+                app: mysql
+        spec:
+            volumes:
+                -   name: mysql-pv
+                    persistentVolumeClaim:
+                        claimName: mysql-pvc
+        containers:
+            -   name: mysql
+                image: "{{ .Values.mysql.image }}:{{ .Values.mysql.tag }}"
+                imagePullPolicy: {{ .Values.mysql.imagePullPolicy }}
+                ports:
+                    -   containerPort: 3306
+                env:
+                    -   name: MYSQL_DATABASE
+                        value: server
+                    -   name: MYSQL_ROOT_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mysql-cred
+                                key: db_password
+                                optional: false
+                    -   name: MYSQL_USER
+                        valueFrom:
+                            secretKeyRef:
+                                name: mysql-cred
+                                key: db_user
+                                optional: false
+                    -   name: MYSQL_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: mysql-cred
+                                key: db_password
+                                optional: false
+                volumeMounts:
+                    -   mountPath: /var/lib/mysql/data
+                        name: mysql-pv
+                        subPath: mysql
 
 ---
 apiVersion: v1
@@ -93,46 +93,46 @@ spec:
     backoffLimit: 9
     template:
         spec:
-        volumes:
-            -   name: mysql-init-script
-                configMap:
-                    name: mysql-init-script
-                    defaultMode: 0777
-        containers:
-        -   name: create-db
-            image: "{{ .Values.mysql.image }}:{{ .Values.mysql.tag }}"
-            imagePullPolicy: {{ .Values.mysql.imagePullPolicy }}
-            volumeMounts:
-            -   name: mysql-init-script
-            mountPath: /bootstrap
-            command:
-            -   "/bin/sh"
-            -   "-c"
-            -   "/bootstrap/bootstrap.sh"
-            env:
-            -   name: DB
-                value: "{{ .Values.mysql.database }}"
-            -   name: MYSQLPORT
-                value: "3306"
-            -   name: MYSQLUSER
-                valueFrom:
-                    secretKeyRef:
-                        name: mysql-cred
-                        key: db_user
-                        optional: false
-            -   name: MYSQLPASSWORD
-                valueFrom:
-                    secretKeyRef:
-                        name: mysql-cred
-                        key: db_password
-                        optional: false
-            -   name: MYSQLHOST
-                valueFrom:
-                    configMapKeyRef:
-                        name: mysql-config
-                        key: MYSQL_HOST
-                        optional: false
-        restartPolicy: OnFailure
+            volumes:
+                -   name: mysql-init-script
+                    configMap:
+                        name: mysql-init-script
+                        defaultMode: 0777
+            containers:
+            -   name: create-db
+                image: "{{ .Values.mysql.image }}:{{ .Values.mysql.tag }}"
+                imagePullPolicy: {{ .Values.mysql.imagePullPolicy }}
+                volumeMounts:
+                -   name: mysql-init-script
+                    mountPath: /bootstrap
+                command:
+                    -   "/bin/sh"
+                    -   "-c"
+                    -   "/bootstrap/bootstrap.sh"
+                env:
+                -   name: DB
+                    value: "{{ .Values.mysql.database }}"
+                -   name: MYSQLPORT
+                    value: "3306"
+                -   name: MYSQLUSER
+                    valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: db_user
+                            optional: false
+                -   name: MYSQLPASSWORD
+                    valueFrom:
+                        secretKeyRef:
+                            name: mysql-cred
+                            key: db_password
+                            optional: false
+                -   name: MYSQLHOST
+                    valueFrom:
+                        configMapKeyRef:
+                            name: mysql-config
+                            key: MYSQL_HOST
+                            optional: false
+            restartPolicy: OnFailure
 
 ---
 apiVersion: v1
