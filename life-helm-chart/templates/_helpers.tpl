@@ -22,10 +22,9 @@ spec:
           image: "{{ $v.deployment.image }}:{{ $v.deployment.tag }}"
           imagePullPolicy: {{ $v.deployment.imagePullPolicy }}
           ports:
-          {{ toYaml $v.deployment.ports | indent 12 }}
+{{ toYaml $v.deployment.ports | indent 12 }}
           env:
-          {{ toYaml $v.deployment.env | indent 12 }}
-      {{- end }}
+{{ toYaml $v.deployment.env | indent 12 }}
 {{- end }}
 
 {{ if $v.service.enabled }}

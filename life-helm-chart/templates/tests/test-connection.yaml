@@ -1,9 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "life-helm-chart.fullname" . }}-test-connection"
-  labels:
-    {{- include "life-helm-chart.labels" . | nindent 4 }}
+  name: "life-test-connection"
   annotations:
     "helm.sh/hook": test
 spec:
@@ -11,5 +9,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "life-helm-chart.fullname" . }}:{{ .Values.service.port }}']
+      args: ['life:8899']
   restartPolicy: Never

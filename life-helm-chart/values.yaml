@@ -17,7 +17,7 @@ myservice:
       env:
         - name: SPRING_DATASOURCE_URL
           valueFrom:
-            configRef:
+            configMapKeyRef:
               name: mysql-config
               key: SPRING_DATASOURCE_URL
               optional: false
