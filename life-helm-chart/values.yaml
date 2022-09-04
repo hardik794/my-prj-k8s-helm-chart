@@ -51,5 +51,5 @@ myservice:
       ports:
         - containerPort: 80
       env:
-        - name: baseUrl
+        - name: BASE_URL
           value: my-prj-service-svc

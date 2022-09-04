@@ -5,5 +5,5 @@ mysql:
   host: mysql-svc
   user: root
   password: root
-  database: lifemanagement
+  database: my_prj_helm
 

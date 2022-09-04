@@ -8,7 +8,7 @@ spec:
         - ReadWriteOnce
     resources:
         requests:
-            storage: 1Gi
+            storage: 32Mi
   
 ---
 apiVersion: apps/v1
@@ -44,22 +44,9 @@ spec:
                                     name: mysql-cred
                                     key: db_password
                                     optional: false
-                        -   name: MYSQL_USER
-                            valueFrom:
-                                secretKeyRef:
-                                    name: mysql-cred
-                                    key: db_user
-                                    optional: false
-                        -   name: MYSQL_PASSWORD
-                            valueFrom:
-                                secretKeyRef:
-                                    name: mysql-cred
-                                    key: db_password
-                                    optional: false
                     volumeMounts:
-                        -   mountPath: /var/lib/mysql/data
+                        -   mountPath: /var/lib/mysql
                             name: mysql-pv
-                            subPath: mysql
 
 ---
 apiVersion: v1
@@ -152,9 +139,10 @@ data:
     bootstrap.sh: |-
         #!/bin/sh
         export IFS=";"
-        if mysql -u$MYSQLUSER -p$MYSQLPASSWORD -h$MYSQLHOST -e "use $DATABASE_NAME";then
+        mysql.server start
+        if mysql -u$MYSQLUSER -p$MYSQLPASSWORD -h$MYSQLHOST -e "use $DB";then
             echo "Database $DATABASE_NAME already exists. Exiting."
         else
             echo Create database
-            mysql -u$MYSQLUSER -p$MYSQLPASSWORD -h$MYSQLHOST -e "CREATE DATABASE $DATABASE_NAME"
+            mysql -u$MYSQLUSER -p$MYSQLPASSWORD -h$MYSQLHOST -e "CREATE DATABASE $DB"
         fi
